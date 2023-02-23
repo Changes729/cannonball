@@ -1,0 +1,3 @@
+[submodule "roms"]
+	path = roms
+	url = git@github.com:jacktang/outrun-roms.git
