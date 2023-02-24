@@ -50,7 +50,9 @@ void OInputs::init()
 
 void OInputs::tick()
 {
+#if 1
     touch_object_control();
+#else
     // Digital Controls: Simulate Analog
     if (!input.analog || !input.gamepad)
     {
@@ -74,6 +76,7 @@ void OInputs::tick()
             digital_pedals();
         }
     }
+#endif
 }
 //获得det[i][j]余子式行列式
 vector<vector<double> > getComplementMinor(vector<vector<double> > det,int i,int j)
@@ -131,6 +134,7 @@ void OInputs::touch_object_control()
 {
     pair<double, double> p[3];
     size_t index = 0;
+#if 1
     for(auto& touch : input.touch_points)
     {
         if(touch.pressure > 0.0)
@@ -145,6 +149,20 @@ void OInputs::touch_object_control()
             break;
         }
     }
+#else
+    pair<double, double> touch[] = {{0.8, 0.8}, {0.75, 0.75}, {0.85, 0.75}};
+    for(auto& t : touch)
+    {
+        p[index].first = t.first * 1920;
+        p[index].second = t.second * 1080;
+        index++;
+
+        if(index >= std::size(p))
+        {
+            break;
+        }
+    }
+#endif
 
     if(index == std::size(p))
     {
