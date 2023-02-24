@@ -346,16 +346,28 @@ void Input::handle_controller_up(SDL_ControllerButtonEvent* evt)
 }
 
 void Input::handle_finger_motion(SDL_TouchFingerEvent* evt){
-    touch_points[evt->fingerId] = *evt;
+    for(auto& p : touch_points)
+    {
+        if(p.touchId == evt->touchId)
+        {
+            p = *evt;
+        }
+    }
 }
 
 void Input::handle_finger_down(SDL_TouchFingerEvent* evt){
-    touch_points[evt->fingerId] = *evt;
+    touch_points.push_back(*evt);
 }
 
 void Input::handle_finger_up(SDL_TouchFingerEvent* evt){
-    touch_points[evt->fingerId] = *evt;
-    touch_points[evt->fingerId].pressure = 0;
+    for(auto itr = touch_points.begin(); itr < touch_points.end(); itr++)
+    {
+        if(itr->touchId == evt->touchId)
+        {
+            touch_points.erase(itr);
+            break;
+        }
+    }
 }
 
 void Input::handle_joy(const uint8_t button, const bool is_pressed)
