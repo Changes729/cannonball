@@ -89,6 +89,7 @@ private:
     // Brake Input
     int16_t input_brake;
 
+    void touch_object_control();
     void digital_steering();
     void digital_pedals();
 };

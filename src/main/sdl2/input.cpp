@@ -345,6 +345,19 @@ void Input::handle_controller_up(SDL_ControllerButtonEvent* evt)
     handle_joy(evt->button, false);
 }
 
+void Input::handle_finger_motion(SDL_TouchFingerEvent* evt){
+    touch_points[evt->fingerId] = *evt;
+}
+
+void Input::handle_finger_down(SDL_TouchFingerEvent* evt){
+    touch_points[evt->fingerId] = *evt;
+}
+
+void Input::handle_finger_up(SDL_TouchFingerEvent* evt){
+    touch_points[evt->fingerId] = *evt;
+    touch_points[evt->fingerId].pressure = 0;
+}
+
 void Input::handle_joy(const uint8_t button, const bool is_pressed)
 {	
     if (button == pad_config[0])   keys[ACCEL]     = is_pressed;

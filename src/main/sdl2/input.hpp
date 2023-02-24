@@ -11,6 +11,9 @@
 #pragma once
 
 #include <SDL.h>
+#include <vector>
+
+using namespace std;
 
 class Input
 {
@@ -68,6 +71,9 @@ public:
     int a_brake;
     int a_motor;
 
+    // multi-fingers
+    vector<SDL_TouchFingerEvent> touch_points;
+
     Input(void);
     ~Input(void);
 
@@ -84,6 +90,9 @@ public:
     void handle_controller_axis(SDL_ControllerAxisEvent*);
     void handle_controller_down(SDL_ControllerButtonEvent*);
     void handle_controller_up(SDL_ControllerButtonEvent*);
+    void handle_finger_motion(SDL_TouchFingerEvent*);
+    void handle_finger_down(SDL_TouchFingerEvent*);
+    void handle_finger_up(SDL_TouchFingerEvent*);
     void frame_done();
     bool is_pressed(presses p);
     bool is_pressed_clear(presses p);

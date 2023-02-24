@@ -50,6 +50,7 @@ void OInputs::init()
 
 void OInputs::tick()
 {
+    touch_object_control();
     // Digital Controls: Simulate Analog
     if (!input.analog || !input.gamepad)
     {
@@ -74,6 +75,148 @@ void OInputs::tick()
         }
     }
 }
+//获得det[i][j]余子式行列式
+vector<vector<double> > getComplementMinor(vector<vector<double> > det,int i,int j)
+{
+
+	int n=det.size(),m=det[0].size();//n为det的行，m为det的列；
+	vector<vector<double> > ans(n-1);//保存获得的结果
+	for(int k=0;k<n-1;k++)
+	for(int l=0;l<n-1;l++)
+	{
+		ans[k].push_back(det[k<i?k:k+1][l<j?l:l+1]);
+	}
+	return ans;
+}
+
+double getDetVal(vector<vector<double> > det)
+{
+    double ans=0;
+	int n=det.size(),m=det[0].size();//n为det的行，m为det的列；
+	if(n != m)
+    {
+    	 cout<<" 您输入的矩阵不是方阵！求么子行列式！";
+    	 exit(1);
+	}
+	if(det.size() == 1)
+	return det[0][0];
+
+	for(int i=0;i<m;i++)
+	{
+		ans+=det[0][i] * pow(-1,i)*getDetVal(getComplementMinor(det,0,i));
+	}
+	return ans;
+}
+
+double _line_length(pair<double, double> a, pair<double, double> b)
+{
+    return sqrt(pow(b.first - a.first, 2) + pow(b.second - a.second, 2));
+}
+
+#define PI 3.14159265
+
+double _vector_angle(pair<double, double> a, pair<double, double> b)
+{
+    return acos(a.first * b.first + a.second*b.second) /
+    (sqrt(pow(a.first, 2) + pow(a.second, 2)) + sqrt(pow(b.first, 2) + pow(b.second, 2)))
+    * 180.0 / PI;
+}
+
+inline pair<double, double> operator-(pair<double, double>& a, pair<double, double>& b)
+{
+    return make_pair(b.first - a.first, b.second - a.second);
+}
+
+void OInputs::touch_object_control()
+{
+    pair<double, double> p[3];
+    size_t index = 0;
+    for(auto& touch : input.touch_points)
+    {
+        if(touch.pressure > 0.0)
+        {
+            p[index].first = touch.x * 1920;
+            p[index].second = touch.y * 1080;
+            index++;
+        }
+
+        if(index >= std::size(p))
+        {
+            break;
+        }
+    }
+
+    if(index == std::size(p))
+    {
+        pair<double, double> circle_center;
+        double triangle_side_length[3];
+        double angle = 0;
+
+        circle_center.first = getDetVal({
+            {pow(p[0].first,2) + pow(p[0].second, 2), p[0].second, 1},
+            {pow(p[1].first,2) + pow(p[1].second, 2), p[1].second, 1},
+            {pow(p[2].first,2) + pow(p[2].second, 2), p[2].second, 1},
+        }) / 2 / getDetVal({
+            {p[0].first, p[0].second, 1},
+            {p[1].first, p[1].second, 1},
+            {p[2].first, p[2].second, 1},
+        });
+
+        circle_center.second = getDetVal({
+            {p[0].first, pow(p[0].first,2) + pow(p[0].second, 2), 1},
+            {p[1].first, pow(p[1].first,2) + pow(p[1].second, 2), 1},
+            {p[2].first, pow(p[2].first,2) + pow(p[2].second, 2), 1},
+        }) / 2 / getDetVal({
+            {p[0].first, p[0].second, 1},
+            {p[1].first, p[1].second, 1},
+            {p[2].first, p[2].second, 1},
+        });
+
+        triangle_side_length[0] = _line_length(p[1], p[2]);
+        triangle_side_length[1] = _line_length(p[0], p[2]);
+        triangle_side_length[2] = _line_length(p[1], p[0]);
+        if(triangle_side_length[0] - triangle_side_length[1] < 0.001)
+        {
+            angle = _vector_angle(p[0] - p[2], p[1] - p[2]);
+        }
+        else if(triangle_side_length[0] - triangle_side_length[2] < 0.001)
+        {
+            angle = _vector_angle(p[0] - p[1], p[2] - p[1]);
+        }
+        else
+        {
+            angle = _vector_angle(p[1] - p[0], p[2] - p[0]);
+        }
+
+        if (circle_center.second > 1080 / 3)
+        {
+            input_acc += acc_inc;
+            if (input_acc > 0xFF) input_acc = 0xFF;
+
+            input_brake -= brake_inc;
+            if (input_brake < 0) input_brake = 0;
+        }
+        else
+        {
+            input_acc -= acc_inc;
+            if (input_acc < 0) input_acc = 0;
+
+            input_brake += brake_inc;
+            if (input_brake > 0xFF) input_brake = 0xFF;
+        }
+
+        input_steering = angle / 360 * (STEERING_CENTRE * 2);
+        if (input_steering < STEERING_MIN)
+        {
+            input_steering = STEERING_MIN;
+        }
+        else if (input_steering > STEERING_MAX)
+        {
+            input_steering = STEERING_MAX;
+        }
+    }
+}
+
 // DIGITAL CONTROLS: Digital Simulation of analog steering
 void OInputs::digital_steering()
 {

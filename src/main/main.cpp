@@ -121,6 +121,16 @@ static void process_events(void)
                 input.close_joy();
                 break;
 
+            case SDL_FINGERMOTION:
+                input.handle_finger_motion(&event.tfinger);
+                break;
+            case SDL_FINGERDOWN:
+                input.handle_finger_down(&event.tfinger);
+                break;
+            case SDL_FINGERUP:
+                input.handle_finger_up(&event.tfinger);
+                break;
+
             case SDL_QUIT:
                 // Handle quit requests (like Ctrl-c).
                 state = STATE_QUIT;
