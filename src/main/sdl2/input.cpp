@@ -348,7 +348,7 @@ void Input::handle_controller_up(SDL_ControllerButtonEvent* evt)
 void Input::handle_finger_motion(SDL_TouchFingerEvent* evt){
     for(auto& p : touch_points)
     {
-        if(p.touchId == evt->touchId)
+        if(p.fingerId == evt->fingerId)
         {
             p = *evt;
         }
@@ -362,7 +362,7 @@ void Input::handle_finger_down(SDL_TouchFingerEvent* evt){
 void Input::handle_finger_up(SDL_TouchFingerEvent* evt){
     for(auto itr = touch_points.begin(); itr < touch_points.end(); itr++)
     {
-        if(itr->touchId == evt->touchId)
+        if(itr->fingerId == evt->fingerId)
         {
             touch_points.erase(itr);
             break;
