@@ -6,7 +6,7 @@
     {
       "label": "build",
       "type": "shell",
-      "command": "mkdir build; cd ${workspaceFolder}/build; cmake ../cmake -DTARGET=linux.cmake && cmake --build ."
+      "command": "mkdir build; cd ${workspaceFolder}/build; cmake ../cmake -DTARGET=linux.cmake -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build ."
     }
   ]
 }
