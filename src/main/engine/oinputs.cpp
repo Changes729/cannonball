@@ -175,17 +175,17 @@ void OInputs::touch_object_control()
         triangle_side_length[0] = _line_length(p[1], p[2]);
         triangle_side_length[1] = _line_length(p[0], p[2]);
         triangle_side_length[2] = _line_length(p[1], p[0]);
-        if(triangle_side_length[0] - triangle_side_length[1] < 0.001)
+        if(abs(triangle_side_length[0] - triangle_side_length[1]) < 0.001)
         {
-            angle = _vector_angle(p[0] - p[2], p[1] - p[2]);
+            angle = _vector_angle(p[2] - circle_center, make_pair(-1, 0));
         }
-        else if(triangle_side_length[0] - triangle_side_length[2] < 0.001)
+        else if(abs(triangle_side_length[0] - triangle_side_length[2]) < 0.001)
         {
-            angle = _vector_angle(p[0] - p[1], p[2] - p[1]);
+            angle = _vector_angle(p[1] - circle_center, make_pair(-1, 0));
         }
         else
         {
-            angle = _vector_angle(p[1] - p[0], p[2] - p[0]);
+            angle = _vector_angle(p[0] - circle_center, make_pair(-1, 0));
         }
 
         if (circle_center.second > 1080 / 3)
@@ -205,7 +205,7 @@ void OInputs::touch_object_control()
             if (input_brake > 0xFF) input_brake = 0xFF;
         }
 
-        input_steering = angle / 360 * (STEERING_CENTRE * 2);
+        input_steering = angle / 180 * (STEERING_CENTRE * 2);
         if (input_steering < STEERING_MIN)
         {
             input_steering = STEERING_MIN;
