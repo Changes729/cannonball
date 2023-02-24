@@ -117,8 +117,8 @@ double _line_length(pair<double, double> a, pair<double, double> b)
 
 double _vector_angle(pair<double, double> a, pair<double, double> b)
 {
-    return acos(a.first * b.first + a.second*b.second) /
-    (sqrt(pow(a.first, 2) + pow(a.second, 2)) + sqrt(pow(b.first, 2) + pow(b.second, 2)))
+    return acos((a.first * b.first + a.second*b.second) /
+    (sqrt(pow(a.first, 2) + pow(a.second, 2)) * sqrt(pow(b.first, 2) + pow(b.second, 2))))
     * 180.0 / PI;
 }
 
