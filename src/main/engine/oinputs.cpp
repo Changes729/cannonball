@@ -206,8 +206,7 @@ void OInputs::touch_object_control()
             angle = _vector_angle(p[0] - circle_center, make_pair(1, 0));
         }
 
-        if (circle_center.second > 1080 / 3)
-        {
+    if (circle_center.second < 1080 * 2 / 3) {
             input_acc += acc_inc;
             if (input_acc > 0xFF) input_acc = 0xFF;
 
